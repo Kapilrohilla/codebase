@@ -1,26 +1,18 @@
-import getBlogs from "@/lib/getUserBlogs";
-import Link from "next/link";
-import React from "react";
+import getUserBlogs from "@/lib/getUserBlogs";
+import PostTitle from "./component/Post";
 
-const UserBlogs = async ({ params }: { params: { userId: string } }) => {
-  const blogs = await getBlogs(params.userId);
+const UserPost = async ({ params }: { params: { userId: string } }) => {
+  const userBlogs = await getUserBlogs(params.userId);
   return (
-    <>
-      <h1>Blogs: {blogs.length} </h1>
-      <ul>
-        {blogs.map((blog) => {
-          return (
-            <li key={blog.id}>
-              {blog.title}
-              <Link href={`/users/${params.userId}/posts`}>
-                <button>Goto this blog</button>
-              </Link>
-            </li>
-          );
+    <section>
+      <h1>This is userSpecific blogs where userId = {params.userId}</h1>
+      <ol>
+        {userBlogs.map((blog) => {
+          return <PostTitle post={blog} key={blog.id} />;
         })}
-      </ul>
-    </>
+      </ol>
+    </section>
   );
 };
 
-export default UserBlogs;
+export default UserPost;
