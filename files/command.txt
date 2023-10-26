@@ -1,0 +1,1 @@
+add to file b.txt this content: Hello world
