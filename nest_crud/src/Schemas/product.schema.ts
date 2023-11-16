@@ -1,10 +1,19 @@
 import mongoose from 'mongoose';
 
 export const ProductSchema = new mongoose.Schema({
-  name: String,
+  name: {
+    type: String,
+    required: true,
+  },
   description: String,
-  qty: Number,
-  price: Number,
+  qty: {
+    type: Number,
+    default: 0,
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
 });
 
 ProductSchema.set('toJSON', {
