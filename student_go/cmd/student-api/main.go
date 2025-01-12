@@ -24,7 +24,6 @@ func main() {
 	db, err := sqlite.New(cfg)
 	if err != nil {
 		log.Fatal(err)
-		slog.Error("failed to start db", err.Error())
 		panic("failed to initiate db connection.")
 	}
 	// server setup
@@ -32,7 +31,7 @@ func main() {
 	router := http.NewServeMux()
 
 	router.HandleFunc("/api/v1/students", student.New(db))
-
+	router.HandleFunc("/api/v1/students/{id}", student.NewById(db))
 	server := http.Server{
 		Addr:    cfg.Addr,
 		Handler: router,

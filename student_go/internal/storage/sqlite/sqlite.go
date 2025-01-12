@@ -57,6 +57,35 @@ func (s *Sqlite) GetStudent(offset int64, limit int64) (interface{}, error) {
 
 	return studs, nil
 }
+
+func (s *Sqlite) GetStudentById(id int64) (types.Student, error) {
+	val, err := s.DB.Query("SELECT * FROM students WHERE id = ?", id)
+
+	if err != nil {
+		return types.Student{}, err
+	}
+	defer val.Close()
+	var stud types.Student
+	for val.Next() {
+		err = val.Scan(&stud.Id, &stud.Name, &stud.Age, &stud.Email, &stud.CreatedAT)
+		if err != nil {
+			fmt.Printf("Error occurred while iterating over data, %s", err)
+		}
+	}
+
+	return stud, nil
+}
+
+func (s *Sqlite) UpdateStudentById(id int64) (int64, error) {
+
+	return 0, nil
+}
+
+func (s *Sqlite) DeleteStudentById(id int64) (int64, error) {
+
+	return 0, nil
+}
+
 func New(cfg config.Config) (*Sqlite, error) {
 	db, err := sql.Open("sqlite3", cfg.Storage)
 	if err != nil {
