@@ -8,29 +8,50 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/kapilrohilla/codebase/internal/storage"
 	"github.com/kapilrohilla/codebase/internal/types"
 	response "github.com/kapilrohilla/codebase/internal/utils"
 )
 
-func New() http.HandlerFunc {
+func New(db storage.Storage) http.HandlerFunc {
 
 	handlePostMethod := func(w http.ResponseWriter, r *http.Request) {
 		var student types.Student
 		var err error = json.NewDecoder(r.Body).Decode(&student)
 
 		if err != nil && errors.Is(err, io.EOF) {
-			// throw error
 			response.WriteJson(w, http.StatusBadRequest, response.GeneralError(err))
 			return
 		}
 
 		// handle body
 		slog.Info("creating a student")
-		response.WriteJson(w, http.StatusCreated, map[string]interface{}{"success": "Ok"})
+
+		lastId, err := db.CreateStudent(
+			student.Name,
+			student.Email,
+			student.Age,
+		)
+
+		if err != nil {
+			response.WriteJson(w, 500, err)
+			return
+		}
+
+		response.WriteJson(w, http.StatusCreated, map[string]interface{}{"success": "Ok", "id": lastId})
 	}
 
 	handleGetMethod := func(w http.ResponseWriter, _ *http.Request) {
-		w.Write([]byte("Welcome to GO-based student-service\nWritten by Kapil Rohilla"))
+		result, err := db.GetStudent(0, 10)
+		if err != nil {
+			fmt.Println(err)
+			response.WriteJson(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		var out map[string]interface{} = map[string]interface{}{"isValid": true, "data": result}
+		response.WriteJson(w, http.StatusOK, out)
+		// w.Write([]byte("Welcome to GO-based student-service\nWritten by Kapil Rohilla"))
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
 		var method string = r.Method

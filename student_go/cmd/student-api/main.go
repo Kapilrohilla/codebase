@@ -13,19 +13,25 @@ import (
 
 	"github.com/kapilrohilla/codebase/internal/config"
 	"github.com/kapilrohilla/codebase/internal/http/handlers/student"
+	"github.com/kapilrohilla/codebase/internal/storage/sqlite"
 )
 
 func main() {
 	fmt.Println("Welcome to Student API")
 	// load config
-	cfg := config.MustLoad()
+	cfg := *config.MustLoad()
 	//database setup
-
+	db, err := sqlite.New(cfg)
+	if err != nil {
+		log.Fatal(err)
+		slog.Error("failed to start db", err.Error())
+		panic("failed to initiate db connection.")
+	}
 	// server setup
 
 	router := http.NewServeMux()
 
-	router.HandleFunc("/api/v1/students", student.New())
+	router.HandleFunc("/api/v1/students", student.New(db))
 
 	server := http.Server{
 		Addr:    cfg.Addr,
