@@ -11,7 +11,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/kapilrohilla/codebase/config"
+	"github.com/kapilrohilla/codebase/internal/config"
+	"github.com/kapilrohilla/codebase/internal/http/handlers/student"
 )
 
 func main() {
@@ -24,9 +25,7 @@ func main() {
 
 	router := http.NewServeMux()
 
-	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Server is running"))
-	})
+	router.HandleFunc("/api/v1/students", student.New())
 
 	server := http.Server{
 		Addr:    cfg.Addr,
