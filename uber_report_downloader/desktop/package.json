@@ -1,0 +1,20 @@
+{
+  "name": "uber-report-downloader",
+  "version": "1.0.0",
+  "description": "Desktop app to download Uber reports",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "electron .",
+    "build": "tsc",
+    "start": "electron dist/index.js"
+  },
+  "dependencies": {
+    "electron": "^36.3.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "@types/node": "^20.10.5",
+    "ts-node": "^10.9.2"
+  }
+}
